@@ -1,0 +1,18 @@
+# -*- coding: utf-8 -*-
+
+[package]
+name            = "curveipo"
+description     = "2D curve interpolation"
+version         = "1.0.0"
+edition         = "2021"
+authors         = ["Michael Büsch <m@bues.ch>"]
+license         = "MIT OR Apache-2.0"
+readme          = "README.md"
+repository      = "https://bues.ch/cgit/curveipors.git"
+categories      = ["algorithms", "no-std"]
+keywords        = ["2D", "vector", "curve", "interpolation"]
+
+[dev-dependencies]
+float_eq        = "1"
+
+# vim: ts=4 sw=4 expandtab
