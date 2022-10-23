@@ -200,14 +200,12 @@ impl<T, P, const SIZE: usize> Curve<T, P, SIZE>
             last.y()
         } else {
             // Find the curve points left handed and right handed to the x value.
-            let mut lhp_found: Option<&P> = None;
+            let mut lhp_found: &P = first;
             let mut rhp_found: &P = first;
-            for rhp in &self.points {
+            for rhp in &self.points[1..] {
                 let rx = rhp.x();
-                if let Some(lhp) = lhp_found {
-                    // Curve X coordinates must be monotonically increasing.
-                    debug_assert!(rx > lhp.x());
-                }
+                // Curve X coordinates must be monotonically increasing.
+                debug_assert!(rx > lhp_found.x());
                 if rx > x {
                     rhp_found = rhp;
                     break;
@@ -216,10 +214,10 @@ impl<T, P, const SIZE: usize> Curve<T, P, SIZE>
                     // Exact x match. Pick this y value.
                     return rhp.y();
                 }
-                lhp_found = Some(rhp);
+                lhp_found = rhp;
             }
             // Linear interpolation between lhp and rhp.
-            x.lin_inter(lhp_found.unwrap(), rhp_found)
+            x.lin_inter(lhp_found, rhp_found)
         }
     }
 }
