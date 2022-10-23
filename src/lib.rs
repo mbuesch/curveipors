@@ -45,6 +45,7 @@
 
 use core::marker::PhantomData;
 
+/// 2D curve point operations.
 pub trait CurvePoint<T> {
     /// Get the `x` coordinate of this curve point.
     fn x(&self) -> T;
@@ -73,6 +74,7 @@ macro_rules! impl_curveipo_point_tuple {
 
 impl_curveipo_point_tuple!(f32, f64, i8, i16, i32, i64, i128, isize);
 
+/// Curve interpolation operations.
 pub trait CurveIpo: Copy {
     /// Interpolate the `y` coordinate corresponding to an `x` coordiante (`self`)
     /// between the `left` hand curve point and the `right` hand curve point.
@@ -155,6 +157,7 @@ macro_rules! impl_curveipo_t_int {
 impl_curveipo_t_float!(f32, f64);
 impl_curveipo_t_int!((i8, i16), (i16, i32), (i32, i64), (i64, i128), (i128, i128), (isize, i128));
 
+/// 2D curve for point interpolation.
 #[derive(Clone, Debug)]
 pub struct Curve<T, P, const SIZE: usize> {
     points:     [P; SIZE],
