@@ -350,15 +350,15 @@ mod tests {
         }
     }
 
-    gen_test_float!(test_interpolate_f32, f32);
-    gen_test_float!(test_interpolate_f64, f64);
+    gen_test_float!(test_lin_inter_f32, f32);
+    gen_test_float!(test_lin_inter_f64, f64);
 
-    gen_test_int!(test_interpolate_i8, i8);
-    gen_test_int!(test_interpolate_i16, i16);
-    gen_test_int!(test_interpolate_i32, i32);
-    gen_test_int!(test_interpolate_i64, i64);
-    gen_test_int!(test_interpolate_i128, i128);
-    gen_test_int!(test_interpolate_isize, isize);
+    gen_test_int!(test_lin_inter_i8, i8);
+    gen_test_int!(test_lin_inter_i16, i16);
+    gen_test_int!(test_lin_inter_i32, i32);
+    gen_test_int!(test_lin_inter_i64, i64);
+    gen_test_int!(test_lin_inter_i128, i128);
+    gen_test_int!(test_lin_inter_isize, isize);
 }
 
 // vim: ts=4 sw=4 expandtab
