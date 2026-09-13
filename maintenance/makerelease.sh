@@ -1,8 +1,7 @@
 #!/bin/sh
 
-srcdir="$(realpath -e "$0" | xargs dirname)"
-
-srcdir="$srcdir/.."
+basedir="$(dirname "$(realpath -e "$0")")"
+srcdir="$basedir/.."
 
 # Import the makerelease.lib
 # https://bues.ch/cgit/misc.git/tree/makerelease.lib
