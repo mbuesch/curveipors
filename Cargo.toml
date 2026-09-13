@@ -5,6 +5,7 @@ name            = "curveipo"
 description     = "2D curve interpolation"
 version         = "1.0.0"
 edition         = "2021"
+rust-version    = "1.61"
 authors         = ["Michael Büsch <m@bues.ch>"]
 license         = "MIT OR Apache-2.0"
 readme          = "README.md"
