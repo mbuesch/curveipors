@@ -44,7 +44,7 @@
 //! # Features
 //!
 //! - `fastfloat`: If enabled, `algebraic` floating point arithmetic will be used.
-//!  Only on rustc >= 1.98.
+//!   Only on rustc >= 1.98.
 //!   On older versions enabling this feature is a no-op.
 
 #![no_std]
