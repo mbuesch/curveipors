@@ -15,4 +15,11 @@ keywords        = ["2D", "vector", "curve", "interpolation"]
 [dev-dependencies]
 float_eq        = "1"
 
+[build-dependencies]
+autocfg         = "1"
+
+[features]
+default         = []
+fastfloat       = []
+
 # vim: ts=4 sw=4 expandtab

@@ -1,6 +1,6 @@
 // -*- coding: utf-8 -*-
 //
-// Copyright 2022 Michael Büsch <m@bues.ch>
+// Copyright 2022 - 2026 Michael Büsch <m@bues.ch>
 //
 // Licensed under the Apache License version 2.0
 // or the MIT license, at your option.
@@ -40,6 +40,12 @@
 //!     let y_interpolated = curve.lin_inter(x);
 //!     assert_eq!(y_interpolated, 4);
 //! ```
+//!
+//! # Features
+//!
+//! - `fastfloat`: If enabled, `algebraic` floating point arithmetic will be used.
+//!  Only on rustc >= 1.98.
+//!   On older versions enabling this feature is a no-op.
 
 #![no_std]
 
@@ -80,11 +86,7 @@ pub trait CurveIpo: Copy {
     /// between the `left` hand curve point and the `right` hand curve point.
     ///
     /// This method uses linear interpolation between the support points.
-    fn lin_inter(
-        &self,
-        left: &impl CurvePoint<Self>,
-        right: &impl CurvePoint<Self>
-    ) -> Self;
+    fn lin_inter(&self, left: &impl CurvePoint<Self>, right: &impl CurvePoint<Self>) -> Self;
 
     /// Check if the `self` value is a finite value.
     ///
@@ -100,6 +102,23 @@ macro_rules! impl_curveipo_t_float {
     ($($type:ty),*) => {
         $(
             impl CurveIpo for $type {
+                #[cfg(all(feature = "fastfloat", rustc_1_98))]
+                #[inline]
+                fn lin_inter(
+                    &self,
+                    left: &impl CurvePoint<Self>,
+                    right: &impl CurvePoint<Self>
+                ) -> Self {
+                    let dx = right.x().algebraic_sub(left.x());
+                    let dy = right.y().algebraic_sub(left.y());
+                    if dx == 0.0 {
+                        left.y()
+                    } else {
+                        ((self.algebraic_sub(left.x())).algebraic_mul((dy.algebraic_div(dx)))).algebraic_add(left.y())
+                    }
+                }
+
+                #[cfg(any(not(feature = "fastfloat"), not(rustc_1_98)))]
                 #[inline]
                 fn lin_inter(
                     &self,
@@ -155,18 +174,26 @@ macro_rules! impl_curveipo_t_int {
 }
 
 impl_curveipo_t_float!(f32, f64);
-impl_curveipo_t_int!((i8, i16), (i16, i32), (i32, i64), (i64, i128), (i128, i128), (isize, i128));
+impl_curveipo_t_int!(
+    (i8, i16),
+    (i16, i32),
+    (i32, i64),
+    (i64, i128),
+    (i128, i128),
+    (isize, i128)
+);
 
 /// 2D curve for point interpolation.
 #[derive(Clone, Debug)]
 pub struct Curve<T, P, const SIZE: usize> {
-    points:     [P; SIZE],
-    _phantom:   PhantomData<T>,
+    points: [P; SIZE],
+    _phantom: PhantomData<T>,
 }
 
 impl<T, P, const SIZE: usize> Curve<T, P, SIZE>
-    where T: CurveIpo + PartialOrd + Copy,
-          P: CurvePoint<T>,
+where
+    T: CurveIpo + PartialOrd + Copy,
+    P: CurvePoint<T>,
 {
     /// Create a new curve.
     ///
@@ -226,8 +253,8 @@ impl<T, P, const SIZE: usize> Curve<T, P, SIZE>
 }
 
 pub mod prelude {
-    pub use super::CurvePoint as _;
     pub use super::CurveIpo as _;
+    pub use super::CurvePoint as _;
 }
 
 #[cfg(test)]
@@ -237,17 +264,12 @@ mod tests {
 
     #[test]
     fn test_base() {
-        let a = Curve::new([
-            (1.0, 2.0),
-        ]);
+        let a = Curve::new([(1.0, 2.0)]);
         assert_eq!(a.points.len(), 1);
         assert_eq!(a.points[0].x(), 1.0);
         assert_eq!(a.points[0].y(), 2.0);
 
-        let a = Curve::new([
-            (3.0, 4.0),
-            (5.0, 6.0),
-        ]);
+        let a = Curve::new([(3.0, 4.0), (5.0, 6.0)]);
         assert_eq!(a.points.len(), 2);
         assert_eq!(a.points[0].x(), 3.0);
         assert_eq!(a.points[0].y(), 4.0);
@@ -297,14 +319,12 @@ mod tests {
                 assert_float_eq!(a.lin_inter(100.0 as $type), -17.0 as $type, r2nd <= 0.001);
 
                 // Single point
-                let a = Curve::new([
-                    (2.0 as $type, 20.0 as $type),
-                ]);
+                let a = Curve::new([(2.0 as $type, 20.0 as $type)]);
                 assert_float_eq!(a.lin_inter(1.0 as $type), 20.0 as $type, r2nd <= 0.001);
                 assert_float_eq!(a.lin_inter(2.0 as $type), 20.0 as $type, r2nd <= 0.001);
                 assert_float_eq!(a.lin_inter(3.0 as $type), 20.0 as $type, r2nd <= 0.001);
             }
-        }
+        };
     }
 
     macro_rules! gen_test_int {
@@ -343,14 +363,12 @@ mod tests {
                 assert_eq!(a.lin_inter(100 as $type), -17 as $type);
 
                 // Single point
-                let a = Curve::new([
-                    (2 as $type, 20 as $type),
-                ]);
+                let a = Curve::new([(2 as $type, 20 as $type)]);
                 assert_eq!(a.lin_inter(1 as $type), 20 as $type);
                 assert_eq!(a.lin_inter(2 as $type), 20 as $type);
                 assert_eq!(a.lin_inter(3 as $type), 20 as $type);
             }
-        }
+        };
     }
 
     gen_test_float!(test_lin_inter_f32, f32);

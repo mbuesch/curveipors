@@ -38,9 +38,15 @@
     let y_interpolated = curve.lin_inter(x);
     assert_eq!(y_interpolated, 4);
 
+# Features
+
+- `fastfloat`: If enabled, `algebraic` floating point arithmetic will be used.
+  Only on rustc >= 1.98.
+  On older versions enabling this feature is a no-op.
+
 # License
 
-Copyright (c) 2022 Michael Büsch <m@bues.ch>
+Copyright (c) 2022 - 2026 Michael Büsch <m@bues.ch>
 
 Licensed under the Apache License version 2.0 or the MIT license, at your option.
 
