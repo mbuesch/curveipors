@@ -33,12 +33,12 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/.rustup
-          key: rustup-${{ runner.os.version }}-${{ matrix.toolchain.version }}
+          key: rustup-${{ matrix.os.version }}-${{ matrix.toolchain.version }}
       - name: Cache Cargo
         uses: actions/cache@v6
         with:
           path: ~/.cargo
-          key: cargo-${{ runner.os.version }}-${{ matrix.toolchain.version }}
+          key: cargo-${{ matrix.os.version }}-${{ matrix.toolchain.version }}
 
       - run: rustup update ${{ matrix.toolchain.version }}
       - run: rustup default ${{ matrix.toolchain.version }}
