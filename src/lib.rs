@@ -114,7 +114,7 @@ macro_rules! impl_curveipo_t_float {
                     if dx == 0.0 {
                         left.y()
                     } else {
-                        ((self.algebraic_sub(left.x())).algebraic_mul((dy.algebraic_div(dx)))).algebraic_add(left.y())
+                        self.algebraic_sub(left.x()).algebraic_mul((dy.algebraic_div(dx))).algebraic_add(left.y())
                     }
                 }
 
